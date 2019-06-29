@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "lint": "tslint --config tslint.json --project . '**/*.ts'",
+    "lint": "tslint --fix --config tslint.json --project . '**/*.ts'",
+    "check-linted": "tslint --config tslint.json --project . '**/*.ts'",
     "format": "prettier --write 'src/**/*.ts'",
     "check-formatted": "prettier --check 'src/**/*.ts'",
     "test": "jest",

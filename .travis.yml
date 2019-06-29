@@ -5,7 +5,7 @@ node_js:
 
 script:
   - npm run check-formatted
-  - npm run lint
+  - npm run check-linted
   - npm run build
   - npm run test
 

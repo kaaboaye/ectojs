@@ -24,8 +24,8 @@ describe("Schema", () => {
   });
 
   test("pipe", () => {
-    const randomNumber = (schema: Schema) =>
-      schema.field("randomNumber", NumberT, { default: () => Math.random() });
+    const randomNumber = (s: Schema) =>
+      s.field("randomNumber", NumberT, { default: () => Math.random() });
 
     const schema = new Schema(repo, "posts").plug(randomNumber);
 
