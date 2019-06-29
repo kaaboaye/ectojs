@@ -1,24 +1,17 @@
 import { Adapter } from "./adapter";
+import { Changeset } from "./changeset";
 import { Schema } from "./schema";
-import { Type } from "./type";
 
 export class Repo {
   private readonly schemas: Set<Schema> = new Set();
-  private readonly types: Map<string, Type>;
 
-  public constructor(public readonly adapter: Adapter) {
-    this.types = new Map(Object.entries(adapter.types));
-  }
-
-  public schema(tableName: string): Schema {
-    return new Schema(this, tableName);
-  }
+  public constructor(public readonly adapter: Adapter) {}
 
   public registerSchema(schema: Schema): void {
     this.schemas.add(schema);
   }
 
-  public getType(typeName: string): Type | undefined {
-    return this.types.get(typeName);
+  public async update<T>(changeset: Changeset<T>): Promise<T> {
+    return changeset.data;
   }
 }

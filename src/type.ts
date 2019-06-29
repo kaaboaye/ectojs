@@ -6,4 +6,6 @@ export interface Type<T = any, CastInput = T, LoadInput = T, Dump = T> {
   cast(input: CastInput): T;
   load(input: LoadInput): T;
   dump(input: T): Dump;
+
+  autogenerate?(): T;
 }
