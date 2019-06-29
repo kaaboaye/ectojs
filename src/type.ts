@@ -1,11 +1,11 @@
-export { TypeCastException } from "./type/cast-exception";
-export { TypeLoadException } from "./type/load-exception";
+import { TypeCastError } from "./type/cast-error";
+
+export { TypeCastError };
 
 export interface Type<T = any, CastInput = T, LoadInput = T, Dump = T> {
-  readonly type: string;
-  cast(input: CastInput): T;
-  load(input: LoadInput): T;
-  dump(input: T): Dump;
+  cast(input: CastInput): T | TypeCastError;
+  load(input: LoadInput): T | TypeCastError;
+  dump(input: T): Dump | TypeCastError;
 
   autogenerate?(): T;
 }

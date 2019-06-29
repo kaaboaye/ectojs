@@ -8,7 +8,9 @@
     "watch": "tsc --watch",
     "lint": "tslint --fix --config tslint.json --project . '**/*.ts'",
     "format": "prettier --write 'src/**/*.ts'",
-    "check-formatted": "prettier --check 'src/**/*.ts'"
+    "check-formatted": "prettier --check 'src/**/*.ts'",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "author": "",
   "license": "ISC",

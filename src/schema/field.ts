@@ -1,4 +1,3 @@
-import { Repo } from "../repo";
 import { Schema, SchemaFieldOptions } from "../schema";
 import { Type } from "../type";
 
@@ -10,7 +9,6 @@ export class SchemaField {
   public readonly onChange: ((value: any) => any) | undefined;
 
   public constructor(
-    public readonly repo: Repo,
     public readonly schema: Schema,
     public readonly name: string,
     public readonly type: Type,
@@ -18,7 +16,7 @@ export class SchemaField {
   ) {
     this.dataStoreName =
       options.dataStoreName ||
-      this.repo.adapter.naming.castSchemaFieldName(name);
+      this.schema.repo.adapter.naming.castSchemaFieldName(name);
 
     this.nullable = options.nullable || false;
     this.primaryKey = options.primaryKey || false;

@@ -6,7 +6,7 @@ import { Type } from "./type";
 export { SchemaField, SchemaFieldOptions };
 
 export class Schema {
-  private readonly fields: Set<SchemaField> = new Set();
+  public readonly fields: Map<string, SchemaField> = new Map();
 
   public constructor(
     public readonly repo: Repo,
@@ -16,8 +16,8 @@ export class Schema {
   }
 
   public field(name: string, type: Type, options?: SchemaFieldOptions): this {
-    const field = new SchemaField(this.repo, this, name, type, options);
-    this.fields.add(field);
+    const field = new SchemaField(this, name, type, options);
+    this.fields.set(name, field);
 
     return this;
   }
