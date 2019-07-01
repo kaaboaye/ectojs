@@ -67,14 +67,14 @@ export class Changeset<T> {
   }
 
   private copyData(): T {
-    const newObject = {} as any;
+    const newObject = {} as Partial<T>;
     Object.entries(this.data).forEach(([key, value]) => {
       const field = this.getField(key as keyof T);
-      newObject[key] =
+      newObject[key as keyof T] =
         typeof field.type.copy === "function" ? field.type.copy(value) : value;
     });
 
-    return newObject;
+    return newObject as T;
   }
 
   private getField(fName: keyof T): SchemaField {
