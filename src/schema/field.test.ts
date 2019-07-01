@@ -11,7 +11,6 @@ describe("SchemaField", () => {
     expect(field.name).toBe("title");
     expect(field.type).toBe(StringT);
     expect(field.dataStoreName).toBe("title");
-    expect(field.nullable).toBe(false);
     expect(field.primaryKey).toBe(false);
     expect(field.default).toBe(null);
     expect(field.onChange).toBe(undefined);
@@ -22,13 +21,6 @@ describe("SchemaField", () => {
       dataStoreName: "some name"
     });
     expect(field.dataStoreName).toBe("some name");
-  });
-
-  test("nullable", () => {
-    const field = new SchemaField(schema, "title", StringT, {
-      nullable: true
-    });
-    expect(field.nullable).toBe(true);
   });
 
   test("primaryKey", () => {

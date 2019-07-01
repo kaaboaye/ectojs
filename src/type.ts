@@ -8,4 +8,6 @@ export interface Type<T = any, CastInput = T, LoadInput = T, Dump = T> {
   dump(input: T): Dump | TypeCastError;
 
   autogenerate?(): T;
+  equal?(lhs: T, rhs: T): boolean;
+  copy?(obj: T): T;
 }

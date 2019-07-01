@@ -3,7 +3,6 @@ import { Type } from "../type";
 
 export class SchemaField {
   public readonly dataStoreName: string;
-  public readonly nullable: boolean;
   public readonly primaryKey: boolean;
   public readonly default: any;
   public readonly onChange: ((value: any) => any) | undefined;
@@ -15,7 +14,6 @@ export class SchemaField {
     options: SchemaFieldOptions = {}
   ) {
     this.dataStoreName = options.dataStoreName || name;
-    this.nullable = options.nullable || false;
     this.primaryKey = options.primaryKey || false;
     this.default = options.default || null;
     this.onChange = options.onChange;
