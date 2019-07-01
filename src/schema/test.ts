@@ -1,17 +1,14 @@
-import { MockAdapter, NumberT, Repo, Schema, SchemaField, StringT } from "..";
-
-const repo = new Repo(MockAdapter);
+import { NumberT, Schema, SchemaField, StringT } from "..";
 
 describe("Schema", () => {
   test("create posts schema", () => {
-    const schema = new Schema(repo, "posts");
+    const schema = new Schema("posts");
 
     expect(schema.tableName).toBe("posts");
-    expect(schema.repo).toBe(repo);
   });
 
   test("create field", () => {
-    const schema = new Schema(repo, "posts").field("title", StringT, {
+    const schema = new Schema("posts").field("title", StringT, {
       default: "some default"
     });
 
@@ -27,7 +24,7 @@ describe("Schema", () => {
     const randomNumber = (s: Schema) =>
       s.field("randomNumber", NumberT, { default: () => Math.random() });
 
-    const schema = new Schema(repo, "posts").plug(randomNumber);
+    const schema = new Schema("posts").plug(randomNumber);
 
     expect(schema.fields.get("randomNumber")).toBeInstanceOf(SchemaField);
   });

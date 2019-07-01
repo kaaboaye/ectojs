@@ -14,10 +14,7 @@ export class SchemaField {
     public readonly type: Type,
     options: SchemaFieldOptions = {}
   ) {
-    this.dataStoreName =
-      options.dataStoreName ||
-      this.schema.repo.adapter.naming.castSchemaFieldName(name);
-
+    this.dataStoreName = options.dataStoreName || name;
     this.nullable = options.nullable || false;
     this.primaryKey = options.primaryKey || false;
     this.default = options.default || null;

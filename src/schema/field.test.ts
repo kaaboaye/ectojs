@@ -1,7 +1,6 @@
-import { MockAdapter, Repo, Schema, SchemaField, StringT } from "..";
+import { Schema, SchemaField, StringT } from "..";
 
-const repo = new Repo(MockAdapter);
-const schema = new Schema(repo, "posts");
+const schema = new Schema("posts");
 
 describe("SchemaField", () => {
   test("constructor with default values", () => {
@@ -11,7 +10,7 @@ describe("SchemaField", () => {
     expect(field.schema).toBe(schema);
     expect(field.name).toBe("title");
     expect(field.type).toBe(StringT);
-    expect(field.dataStoreName).toBe("title+casted");
+    expect(field.dataStoreName).toBe("title");
     expect(field.nullable).toBe(false);
     expect(field.primaryKey).toBe(false);
     expect(field.default).toBe(null);
