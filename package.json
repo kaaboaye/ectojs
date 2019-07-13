@@ -2,7 +2,7 @@
   "name": "ectojs",
   "version": "1.0.0",
   "description": "Ecto JS",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
