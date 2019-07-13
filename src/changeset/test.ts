@@ -16,7 +16,7 @@ describe("changeset", () => {
 
   describe("changeset", () => {
     test("new object", () => {
-      const changeset = new Changeset(schema, null);
+      const changeset = new Changeset(schema, undefined);
 
       expect(changeset.errors).toEqual([]);
       expect(changeset.changes).toEqual(new Map());
@@ -35,7 +35,7 @@ describe("changeset", () => {
     test("changes field on correct data", () => {
       const changeset = new Changeset(
         schema,
-        null,
+        undefined,
         { content: "some content" },
         ["content"]
       );
@@ -57,7 +57,7 @@ describe("changeset", () => {
     test("invalidates changeset on bad data", () => {
       const changeset = new Changeset(
         schema,
-        null,
+        undefined,
         { rating: "definitely not a number" },
         ["rating"]
       );
@@ -79,7 +79,7 @@ describe("changeset", () => {
 
   describe("applyChanges", () => {
     test("new object", () => {
-      const newComment = new Changeset(schema, null).applyChanges();
+      const newComment = new Changeset(schema, undefined).applyChanges();
 
       expect(newComment).toEqual({
         author: "anonymous",
@@ -92,7 +92,7 @@ describe("changeset", () => {
     test("changes fields on new object", () => {
       const newComment = new Changeset<typeof comment>(
         schema,
-        null,
+        undefined,
         { content: "some content", rating: 1 },
         ["content", "rating"]
       ).applyChanges();

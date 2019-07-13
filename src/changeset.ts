@@ -12,11 +12,11 @@ export class Changeset<T> {
 
   public constructor(
     public readonly schema: Schema,
-    data: Readonly<T> | null,
+    data: Readonly<T> | undefined,
     public readonly params: Partial<T> = {},
     public readonly allowed: (keyof T)[] = []
   ) {
-    // construct default data object
+    // create default data object
     if (!data) {
       const empty = {} as T;
       this.schema.fields.forEach(field => {
@@ -57,7 +57,7 @@ export class Changeset<T> {
   }
 
   public applyChanges(): T {
-    const newObject: T = this.copyData();
+    const newObject = this.copyData();
 
     this.changes.forEach((change, fName) => {
       newObject[fName] = change;
