@@ -66,6 +66,18 @@ export class Changeset<T> {
     return newObject;
   }
 
+  public applyInsertAction(): object {
+    return Object.entries(this.copyData()).reduce(
+      (acc, [fName, fValue]) => {
+        const value = this.changes.get(fName as keyof T) || fValue;
+        const field = this.getField(fName as keyof T);
+
+        acc[field.dataStoreName] = value;
+      },
+      {} as any
+    );
+  }
+
   private copyData(): T {
     const newObject = {} as Partial<T>;
     Object.entries(this.data).forEach(([key, value]) => {
