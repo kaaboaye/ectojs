@@ -1,5 +1,4 @@
-import { Adapter } from "../adapter";
-import { Changeset } from "../changeset";
+import { Adapter, Changeset } from "..";
 
 export const MockAdapter: Adapter = {
   name: "MockAdapter",

@@ -1,22 +1,50 @@
+import { Changeset, Type } from ".";
+
 import { SchemaField } from "./schema/field";
 import { SchemaFieldOptions } from "./schema/field-options";
-import { Type } from "./type";
+import { Schema } from "./schema/schema";
+import { SchemaBuilder } from "./schema/schema-builder";
 
-export { SchemaField, SchemaFieldOptions };
+export { SchemaField, SchemaFieldOptions, SchemaBuilder, Schema };
 
-export class Schema {
-  public readonly fields: Map<string, SchemaField> = new Map();
+export function createSchema<T>(tableName: Readonly<string>): SchemaBuilder<T> {
+  const fields = new Map<keyof T, SchemaField<T>>();
 
-  public constructor(public readonly tableName: string) {}
+  return {
+    field(
+      name: keyof T,
+      type: Type,
+      options?: SchemaFieldOptions
+    ): SchemaBuilder<T> {
+      const field = new SchemaField(name, type, options);
+      fields.set(name, field);
 
-  public field(name: string, type: Type, options?: SchemaFieldOptions): this {
-    const field = new SchemaField(this, name, type, options);
-    this.fields.set(name, field);
+      return this;
+    },
 
-    return this;
-  }
+    plug(
+      plug: (schema: SchemaBuilder<T>) => SchemaBuilder<T>
+    ): SchemaBuilder<T> {
+      return plug(this);
+    },
 
-  public plug(plug: (schema: this) => this): this {
-    return plug(this);
-  }
+    done(): Schema<T> {
+      if (fields.size === 0) {
+        throw new Error("Schema MUST contain fields");
+      }
+
+      return Object.freeze({
+        tableName,
+        fields,
+
+        changeset(
+          data: Readonly<T> | undefined,
+          params: Partial<T>,
+          allowed: readonly (keyof T)[]
+        ): Changeset<T> {
+          return new Changeset(this, data, params, allowed);
+        }
+      });
+    }
+  };
 }

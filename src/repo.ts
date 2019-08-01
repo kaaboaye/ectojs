@@ -1,5 +1,4 @@
-import { Adapter } from "./adapter";
-import { Changeset } from "./changeset";
+import { Adapter, Changeset } from ".";
 
 export class Repo {
   public constructor(public readonly adapter: Adapter) {}

@@ -1,11 +1,20 @@
-import { Changeset, NumberType, Schema, StringType } from "..";
+import { Changeset, NumberType, StringType } from "..";
+import { createSchema } from "../schema";
+
+interface Comment {
+  author: string;
+  color: string;
+  rating: number;
+  content: string;
+}
 
 describe("changeset", () => {
-  const schema = new Schema("comments")
+  const schema = createSchema<Comment>("comments")
     .field("author", StringType, { default: "anonymous" })
     .field("color", StringType, { default: () => "red" })
     .field("rating", NumberType)
-    .field("content", StringType);
+    .field("content", StringType)
+    .done();
 
   const comment = Object.freeze({
     author: "some author",
@@ -16,7 +25,7 @@ describe("changeset", () => {
 
   describe("changeset", () => {
     test("new object", () => {
-      const changeset = new Changeset(schema, undefined);
+      const changeset = schema.changeset(undefined, {}, []);
 
       expect(changeset.errors).toEqual([]);
       expect(changeset.changes).toEqual(new Map());
@@ -58,7 +67,7 @@ describe("changeset", () => {
       const changeset = new Changeset(
         schema,
         undefined,
-        { rating: "definitely not a number" },
+        { rating: "definitely not a number" as any },
         ["rating"]
       );
 
@@ -90,7 +99,7 @@ describe("changeset", () => {
     });
 
     test("changes fields on new object", () => {
-      const newComment = new Changeset<typeof comment>(
+      const newComment = new Changeset<Comment>(
         schema,
         undefined,
         { content: "some content", rating: 1 },

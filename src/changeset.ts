@@ -1,5 +1,4 @@
-import { Schema, SchemaField } from "./schema";
-import { TypeCastError } from "./type";
+import { Schema, SchemaField, TypeCastError } from ".";
 
 export class Changeset<T> {
   public readonly errors: TypeCastError[] = [];
@@ -11,16 +10,16 @@ export class Changeset<T> {
   }
 
   public constructor(
-    public readonly schema: Schema,
+    public readonly schema: Schema<T>,
     data: Readonly<T> | undefined,
     public readonly params: Partial<T> = {},
-    public readonly allowed: (keyof T)[] = []
+    public readonly allowed: readonly (keyof T)[] = []
   ) {
     // create default data object
     if (!data) {
       const empty = {} as T;
       this.schema.fields.forEach(field => {
-        empty[field.name as keyof T] =
+        empty[field.name] =
           typeof field.default === "function" ? field.default() : field.default;
       });
       this.data = empty;
@@ -89,13 +88,8 @@ export class Changeset<T> {
     return newObject as T;
   }
 
-  private getField(fName: keyof T): SchemaField {
-    const field = this.schema.fields.get(fName as string);
-
-    if (!field) {
-      throw Error(`unknown field ${fName} in schema ${this.schema.tableName}`);
-    }
-
-    return field;
+  private getField(fName: keyof T): SchemaField<T> {
+    // tslint:disable-next-line: no-non-null-assertion
+    return this.schema.fields.get(fName)!;
   }
 }

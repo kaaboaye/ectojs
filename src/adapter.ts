@@ -1,5 +1,5 @@
+import { Changeset } from ".";
 import { MockAdapter } from "./adapter/mock-adapter";
-import { Changeset } from "./changeset";
 
 export { MockAdapter };
 

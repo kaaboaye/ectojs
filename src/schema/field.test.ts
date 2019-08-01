@@ -1,13 +1,10 @@
-import { Schema, SchemaField, StringType } from "..";
-
-const schema = new Schema("posts");
+import { SchemaField, StringType } from "..";
 
 describe("SchemaField", () => {
   test("constructor with default values", () => {
-    const field = new SchemaField(schema, "title", StringType);
+    const field = new SchemaField("title", StringType);
 
     expect(field).toBeInstanceOf(SchemaField);
-    expect(field.schema).toBe(schema);
     expect(field.name).toBe("title");
     expect(field.type).toBe(StringType);
     expect(field.dataStoreName).toBe("title");
@@ -17,21 +14,21 @@ describe("SchemaField", () => {
   });
 
   test("custom data store name", () => {
-    const field = new SchemaField(schema, "title", StringType, {
+    const field = new SchemaField("title", StringType, {
       dataStoreName: "some name"
     });
     expect(field.dataStoreName).toBe("some name");
   });
 
   test("primaryKey", () => {
-    const field = new SchemaField(schema, "title", StringType, {
+    const field = new SchemaField("title", StringType, {
       primaryKey: true
     });
     expect(field.primaryKey).toBe(true);
   });
 
   test("default", () => {
-    const field = new SchemaField(schema, "title", StringType, {
+    const field = new SchemaField("title", StringType, {
       default: "some default"
     });
     expect(field.default).toBe("some default");
@@ -39,7 +36,7 @@ describe("SchemaField", () => {
 
   test("onChange", () => {
     const onChange = (x: any) => x;
-    const field = new SchemaField(schema, "title", StringType, { onChange });
+    const field = new SchemaField("title", StringType, { onChange });
     expect(field.onChange).toBe(onChange);
   });
 });

@@ -1,30 +1,53 @@
-import { NumberType, Schema, SchemaField, StringType } from "..";
+// tslint:disable: no-non-null-assertion
+
+import { NumberType, SchemaField, StringType, createSchema } from "..";
+import { SchemaBuilder } from "../schema";
+
+interface Post {
+  title: string;
+}
 
 describe("Schema", () => {
   test("create posts schema", () => {
-    const schema = new Schema("posts");
+    const postSchema = createSchema<Post>("posts")
+      .field("title", StringType)
+      .done();
 
-    expect(schema.tableName).toBe("posts");
+    expect(postSchema.tableName).toBe("posts");
+  });
+
+  test("cannot create empty schema", () => {
+    expect(() => createSchema("empty").done()).toThrow();
   });
 
   test("create field", () => {
-    const schema = new Schema("posts").field("title", StringType, {
-      default: "some default"
-    });
+    const schema = createSchema<Post>("posts")
+      .field("title", StringType, { default: "some default" })
+      .done();
 
     expect(schema.fields.get("title")).toBeInstanceOf(SchemaField);
-    expect((schema.fields.get("title") as SchemaField).name).toBe("title");
-    expect((schema.fields.get("title") as SchemaField).type).toBe(StringType);
-    expect((schema.fields.get("title") as SchemaField).default).toBe(
-      "some default"
-    );
+    expect(schema.fields.get("title")!.name).toBe("title");
+    expect(schema.fields.get("title")!.type).toBe(StringType);
+    expect(schema.fields.get("title")!.default).toBe("some default");
   });
 
   test("pipe", () => {
-    const randomNumber = (s: Schema) =>
-      s.field("randomNumber", NumberType, { default: () => Math.random() });
+    interface PostWithRandomNumber extends Post {
+      randomNumber: number;
+    }
 
-    const schema = new Schema("posts").plug(randomNumber);
+    function randomNumber(
+      s: SchemaBuilder<PostWithRandomNumber>
+    ): SchemaBuilder<PostWithRandomNumber> {
+      return s.field("randomNumber", NumberType, {
+        default: () => Math.random()
+      });
+    }
+
+    const schema = createSchema<PostWithRandomNumber>("posts")
+      .field("title", StringType)
+      .plug(randomNumber)
+      .done();
 
     expect(schema.fields.get("randomNumber")).toBeInstanceOf(SchemaField);
   });

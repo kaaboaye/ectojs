@@ -1,4 +1,4 @@
-import { TypeCastError } from "../type";
+import { TypeCastError } from "..";
 
 export const StringType = Object.freeze({
   cast(input: string | number | bigint | boolean): string | TypeCastError {
