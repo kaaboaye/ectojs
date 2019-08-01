@@ -1,7 +1,9 @@
 import { Type, TypeCastError } from "../type";
 
-class BigIntImpl implements Type<bigint> {
-  public cast(input: number | bigint | string): bigint | TypeCastError {
+type CastType = number | bigint | string;
+
+export const BigIntType: Type<bigint, CastType> = Object.freeze({
+  cast(input: CastType): bigint | TypeCastError {
     if (typeof input === "bigint") {
       return input;
     }
@@ -19,15 +21,13 @@ class BigIntImpl implements Type<bigint> {
     } catch {
       return new TypeCastError("has to be a bigint");
     }
-  }
+  },
 
-  public load(input: bigint): bigint {
+  load(input: bigint): bigint {
     return input;
-  }
+  },
 
-  public dump(input: bigint): bigint {
+  dump(input: bigint): bigint {
     return BigInt(input);
   }
-}
-
-export const BigIntT = Object.freeze(new BigIntImpl());
+});
