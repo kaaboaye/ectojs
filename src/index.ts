@@ -9,4 +9,4 @@ export {
 } from "./schema";
 export { Type, TypeCastError } from "./type";
 export { StringType, NumberType, BigIntType } from "./basic-types";
-export { Changeset } from "./changeset";
+export { Changeset, createChangeset } from "./changeset";

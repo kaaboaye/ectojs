@@ -1,4 +1,4 @@
-import { Changeset, Type } from ".";
+import { Changeset, Type, createChangeset } from ".";
 
 import { SchemaField } from "./schema/field";
 import { SchemaFieldOptions } from "./schema/field-options";
@@ -42,7 +42,7 @@ export function createSchema<T>(tableName: Readonly<string>): SchemaBuilder<T> {
           params: Partial<T>,
           allowed: readonly (keyof T)[]
         ): Changeset<T> {
-          return new Changeset(this, data, params, allowed);
+          return createChangeset(this, data, params, allowed);
         }
       });
     }

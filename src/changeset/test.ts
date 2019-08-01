@@ -1,4 +1,5 @@
-import { Changeset, NumberType, StringType } from "..";
+import { NumberType, StringType } from "..";
+import { createChangeset } from "../changeset";
 import { createSchema } from "../schema";
 
 interface Comment {
@@ -42,7 +43,7 @@ describe("changeset", () => {
     });
 
     test("changes field on correct data", () => {
-      const changeset = new Changeset(
+      const changeset = createChangeset(
         schema,
         undefined,
         { content: "some content" },
@@ -64,7 +65,7 @@ describe("changeset", () => {
     });
 
     test("invalidates changeset on bad data", () => {
-      const changeset = new Changeset(
+      const changeset = createChangeset(
         schema,
         undefined,
         { rating: "definitely not a number" as any },
@@ -88,7 +89,12 @@ describe("changeset", () => {
 
   describe("applyChanges", () => {
     test("new object", () => {
-      const newComment = new Changeset(schema, undefined).applyChanges();
+      const newComment = createChangeset(
+        schema,
+        undefined,
+        {},
+        []
+      ).applyChanges();
 
       expect(newComment).toEqual({
         author: "anonymous",
@@ -99,7 +105,7 @@ describe("changeset", () => {
     });
 
     test("changes fields on new object", () => {
-      const newComment = new Changeset<Comment>(
+      const newComment = createChangeset<Comment>(
         schema,
         undefined,
         { content: "some content", rating: 1 },
@@ -115,14 +121,19 @@ describe("changeset", () => {
     });
 
     test("apply changes creates new object", () => {
-      const newComment = new Changeset(schema, comment, {}, []).applyChanges();
+      const newComment = createChangeset(
+        schema,
+        comment,
+        {},
+        []
+      ).applyChanges();
 
       expect(newComment).toEqual(comment);
       expect(newComment).not.toBe(comment);
     });
 
     test("input data is immutable", () => {
-      const newComment = new Changeset(
+      const newComment = createChangeset(
         schema,
         comment,
         { author: "new author" },
@@ -133,7 +144,7 @@ describe("changeset", () => {
     });
 
     test("ignores changes not listed in allowed", () => {
-      const changed = new Changeset(
+      const changed = createChangeset(
         schema,
         comment,
         { author: "new author" },
@@ -144,7 +155,7 @@ describe("changeset", () => {
     });
 
     test("handles not provided params", () => {
-      const newComment = new Changeset(schema, comment, {}, [
+      const newComment = createChangeset(schema, comment, {}, [
         "author"
       ]).applyChanges();
 
@@ -159,7 +170,7 @@ describe("changeset", () => {
         content: "new content"
       };
 
-      const newComment = new Changeset(schema, comment, changes, [
+      const newComment = createChangeset(schema, comment, changes, [
         "author",
         "color",
         "rating",

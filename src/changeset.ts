@@ -1,86 +1,42 @@
 import { Schema, SchemaField, TypeCastError } from ".";
 
-export class Changeset<T> {
-  public readonly errors: TypeCastError[] = [];
-  public readonly data: Readonly<T>;
-  public readonly changes: Map<keyof T, any> = new Map();
+import { Changeset } from "./changeset/changeset";
 
-  public get valid(): boolean {
-    return this.errors.length === 0;
-  }
+export { Changeset };
 
-  public constructor(
-    public readonly schema: Schema<T>,
-    data: Readonly<T> | undefined,
-    public readonly params: Partial<T> = {},
-    public readonly allowed: readonly (keyof T)[] = []
-  ) {
-    // create default data object
-    if (!data) {
+export function createChangeset<T>(
+  schema: Schema<T>,
+  // tslint:disable-next-line: variable-name
+  data_: Readonly<T> | undefined,
+  params: Partial<T>,
+  allowed: readonly (keyof T)[]
+): Changeset<T> {
+  const errors: TypeCastError[] = [];
+  const data: Readonly<T> = (() => {
+    if (!data_) {
       const empty = {} as T;
-      this.schema.fields.forEach(field => {
+      schema.fields.forEach(field => {
         empty[field.name] =
           typeof field.default === "function" ? field.default() : field.default;
       });
-      this.data = empty;
-    } else {
-      this.data = data;
+
+      return empty;
     }
 
-    // validate allowed
-    this.allowed.forEach(fName => {
-      if (typeof this.params[fName] === "undefined") {
-        return;
-      }
+    return data_;
+  })();
 
-      const field = this.getField(fName);
+  const changes = new Map<keyof T, any>();
 
-      const newValue = field.type.cast(this.params[fName]);
-
-      if (newValue instanceof TypeCastError) {
-        this.errors.push(newValue);
-
-        return;
-      }
-
-      if (typeof field.type.equal === "function") {
-        if (!field.type.equal(this.data[fName], newValue)) {
-          this.changes.set(fName, newValue);
-        }
-
-        // tslint:disable-next-line
-      } else if (this.data[fName] !== this.params[fName]) {
-        this.changes.set(fName, newValue);
-      }
-    });
+  function getField(fName: keyof T): SchemaField<T> {
+    // tslint:disable-next-line: no-non-null-assertion
+    return schema.fields.get(fName)!;
   }
 
-  public applyChanges(): T {
-    const newObject = this.copyData();
-
-    this.changes.forEach((change, fName) => {
-      newObject[fName] = change;
-    });
-
-    return newObject;
-  }
-
-  public applyInsertAction(): object {
-    return Object.entries(this.copyData()).reduce(
-      (acc, [fName, fValue]) => {
-        const value = this.changes.get(fName as keyof T) || fValue;
-        const field = this.getField(fName as keyof T);
-
-        acc[field.dataStoreName] = value;
-      },
-      {} as any
-    );
-  }
-
-  private copyData(): T {
+  function copyData(): T {
     const newObject = {} as Partial<T>;
-    Object.entries(this.data).forEach(([key, value]) => {
-      const field = this.getField(key as keyof T);
+    Object.entries(data).forEach(([key, value]) => {
+      const field = getField(key as keyof T);
       newObject[key as keyof T] =
         typeof field.type.copy === "function" ? field.type.copy(value) : value;
     });
@@ -88,8 +44,67 @@ export class Changeset<T> {
     return newObject as T;
   }
 
-  private getField(fName: keyof T): SchemaField<T> {
-    // tslint:disable-next-line: no-non-null-assertion
-    return this.schema.fields.get(fName)!;
-  }
+  allowed.forEach(fName => {
+    if (typeof params[fName] === "undefined") {
+      return;
+    }
+
+    const field = getField(fName);
+    const newValue = field.type.cast(params[fName]);
+
+    if (newValue instanceof TypeCastError) {
+      errors.push(newValue);
+
+      return;
+    }
+
+    if (typeof field.type.equal === "function") {
+      if (!field.type.equal(data[fName], newValue)) {
+        changes.set(fName, newValue);
+      }
+
+      // tslint:disable-next-line: strict-comparisons
+    } else if (data[fName] !== params[fName]) {
+      changes.set(fName, newValue);
+    }
+  });
+
+  return Object.freeze({
+    errors,
+    data,
+    changes,
+    schema,
+    params,
+    allowed,
+
+    get valid(): boolean {
+      return errors.length === 0;
+    },
+
+    applyChanges(): T {
+      if (!this.valid) {
+        throw new Error("Cannot apply changes on invalid object");
+      }
+
+      const newObject = copyData();
+
+      this.changes.forEach((change, fName) => {
+        newObject[fName] = change;
+      });
+
+      return newObject;
+    },
+
+    applyInsertAction(): T {
+      return Object.entries(copyData()).reduce(
+        (acc, [fName, fValue]) => {
+          const value = changes.get(fName as keyof T) || fValue;
+          const field = getField(fName as keyof T);
+
+          acc[field.dataStoreName] = value;
+        },
+        {} as any
+      );
+    }
+  });
 }
