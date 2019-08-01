@@ -1,9 +1,7 @@
-import { Type, TypeCastError } from "../type";
+import { TypeCastError } from "../type";
 
-type CastType = number | bigint | string;
-
-export const BigIntType: Type<bigint, CastType> = Object.freeze({
-  cast(input: CastType): bigint | TypeCastError {
+export const BigIntType = Object.freeze({
+  cast(input: number | bigint | string): bigint | TypeCastError {
     if (typeof input === "bigint") {
       return input;
     }

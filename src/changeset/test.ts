@@ -1,11 +1,11 @@
-import { Changeset, NumberType, Schema, StringT } from "..";
+import { Changeset, NumberType, Schema, StringType } from "..";
 
 describe("changeset", () => {
   const schema = new Schema("comments")
-    .field("author", StringT, { default: "anonymous" })
-    .field("color", StringT, { default: () => "red" })
+    .field("author", StringType, { default: "anonymous" })
+    .field("color", StringType, { default: () => "red" })
     .field("rating", NumberType)
-    .field("content", StringT);
+    .field("content", StringType);
 
   const comment = Object.freeze({
     author: "some author",

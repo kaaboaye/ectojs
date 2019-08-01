@@ -1,8 +1,6 @@
-import { Type, TypeCastError } from "../type";
+import { TypeCastError } from "../type";
 
-type CastType = number | string | bigint;
-
-export const NumberType: Type<number, CastType> = Object.freeze({
+export const NumberType = Object.freeze({
   cast(input: number | string | bigint): number | TypeCastError {
     if (["symbol", "boolean", "object"].includes(typeof input)) {
       return new TypeCastError("has to be a number");
