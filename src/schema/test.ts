@@ -1,4 +1,4 @@
-import { NumberT, Schema, SchemaField, StringT } from "..";
+import { NumberType, Schema, SchemaField, StringT } from "..";
 
 describe("Schema", () => {
   test("create posts schema", () => {
@@ -22,7 +22,7 @@ describe("Schema", () => {
 
   test("pipe", () => {
     const randomNumber = (s: Schema) =>
-      s.field("randomNumber", NumberT, { default: () => Math.random() });
+      s.field("randomNumber", NumberType, { default: () => Math.random() });
 
     const schema = new Schema("posts").plug(randomNumber);
 
